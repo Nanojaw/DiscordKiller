@@ -1,0 +1,1 @@
+/home/maltea/rustprjcts/DiscordKiller/target/debug/discord_killer: /home/maltea/rustprjcts/DiscordKiller/src/crossterm.rs /home/maltea/rustprjcts/DiscordKiller/src/login.rs /home/maltea/rustprjcts/DiscordKiller/src/main.rs /home/maltea/rustprjcts/DiscordKiller/src/ui.rs

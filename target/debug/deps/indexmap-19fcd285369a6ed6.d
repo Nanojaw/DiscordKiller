@@ -1,0 +1,14 @@
+/home/maltea/rustprjcts/DiscordKiller/target/debug/deps/indexmap-19fcd285369a6ed6.rmeta: /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/lib.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/arbitrary.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/macros.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/equivalent.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/mutable_keys.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/util.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/map.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/map/core.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/map/core/raw.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/set.rs
+
+/home/maltea/rustprjcts/DiscordKiller/target/debug/deps/indexmap-19fcd285369a6ed6.d: /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/lib.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/arbitrary.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/macros.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/equivalent.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/mutable_keys.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/util.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/map.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/map/core.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/map/core/raw.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/set.rs
+
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/lib.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/arbitrary.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/macros.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/equivalent.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/mutable_keys.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/util.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/map.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/map/core.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/map/core/raw.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.2/src/set.rs:

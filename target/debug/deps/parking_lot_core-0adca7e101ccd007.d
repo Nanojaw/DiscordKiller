@@ -1,0 +1,11 @@
+/home/maltea/rustprjcts/DiscordKiller/target/debug/deps/parking_lot_core-0adca7e101ccd007.rmeta: /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/lib.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/parking_lot.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/spinwait.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/thread_parker/mod.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/util.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/word_lock.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/thread_parker/linux.rs
+
+/home/maltea/rustprjcts/DiscordKiller/target/debug/deps/parking_lot_core-0adca7e101ccd007.d: /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/lib.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/parking_lot.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/spinwait.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/thread_parker/mod.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/util.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/word_lock.rs /home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/thread_parker/linux.rs
+
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/lib.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/parking_lot.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/spinwait.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/thread_parker/mod.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/util.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/word_lock.rs:
+/home/maltea/.cargo/registry/src/github.com-1ecc6299db9ec823/parking_lot_core-0.9.5/src/thread_parker/linux.rs:
