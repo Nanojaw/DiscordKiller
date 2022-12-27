@@ -1,14 +1,12 @@
-use crate::login::LoginApp;
+use crate::login_app::app::LoginApp;
 use tui::{
     backend::Backend,
-    layout::{Constraint, Direction, Layout, Rect},
+    layout::{Constraint, Layout, Rect},
     style::{Color, Modifier, Style},
-    symbols,
     text::{Span, Spans},
-    widgets::canvas::{Canvas, Line, Map, MapResolution, Rectangle},
     widgets::{
-        Axis, BarChart, Block, Borders, Cell, Chart, Dataset, Gauge, LineGauge, List, ListItem,
-        Paragraph, Row, Sparkline, Table, Tabs, Wrap,
+        Block, Borders,
+        Paragraph, Wrap,
     },
     Frame,
 };
@@ -21,23 +19,6 @@ pub fn draw_login_app<B: Backend>(f: &mut Frame<B>, app: &mut LoginApp) {
     draw_text(f, chunks[0], vec![
         Spans::from("Login screen"),
     ]);
-    //draw_first_tab(f, app, chunks[1]);
-}
-
-fn draw_first_tab<B>(f: &mut Frame<B>, app: &mut LoginApp, area: Rect)
-where
-    B: Backend,
-{
-    let chunks = Layout::default()
-        .constraints(
-            [
-                Constraint::Length(9),
-                Constraint::Min(8),
-                Constraint::Length(7),
-            ]
-            .as_ref(),
-        )
-        .split(area);
 }
 
 fn draw_text<B>(f: &mut Frame<B>, area: Rect, text: Vec<Spans>)
