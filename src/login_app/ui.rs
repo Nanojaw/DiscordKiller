@@ -102,7 +102,7 @@ impl<'a> LoginApp<'a> {
                 f.set_cursor(
                     // Put cursor past the end of the input text
                     chunks[self.field_idx + 1].x
-                        + self.username_password[self.field_idx].len() as u16
+                        + self.username_password[self.field_idx].chars().count() as u16
                         + 1,
                     // Move one line down, from the border to the input line
                     chunks[self.field_idx + 1].y + 1,
