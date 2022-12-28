@@ -7,9 +7,10 @@ pub struct LoginApp<'a> {
     pub title: &'a str,
 
     pub input_mode: InputMode,
-    pub input_idx: usize,
+    pub field_idx: usize,
 
     pub username_password: [String; 2],
+    pub password_stars: String,
 
     pub should_quit: bool,
     pub enhanced_graphics: bool,
@@ -21,9 +22,10 @@ impl<'a> LoginApp<'a> {
             title,
 
             input_mode: InputMode::Normal,
-            input_idx: 0,
+            field_idx: 0,
 
             username_password: ["".to_string(), "".to_string()],
+            password_stars: String::new(),
 
             should_quit: false,
             enhanced_graphics,

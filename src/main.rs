@@ -1,5 +1,4 @@
 mod login_app;
-mod ui;
 
 use argh::FromArgs;
 use std::{error::Error, io, time::Duration};
@@ -31,7 +30,7 @@ pub fn run(tick_rate: Duration, enhanced_graphics: bool) -> Result<(), Box<dyn E
     let mut terminal = Terminal::new(backend)?;
 
     // create app and run it
-    let app = login_app::app::LoginApp::new("Login", enhanced_graphics);
+    let app = login_app::app::LoginApp::new("Hackchat", enhanced_graphics);
 
     let res = app.run_app(&mut terminal, tick_rate);
 
