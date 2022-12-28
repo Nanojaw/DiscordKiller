@@ -1,5 +1,5 @@
 use tui::{backend::Backend, Terminal};
-use super::app::LoginApp;
+use super::app::{LoginApp, InputMode};
 use std::{time::Duration, time::Instant, io};
 use crate::ui;
 use crossterm::{event, event::Event, event::KeyCode};
@@ -16,9 +16,40 @@ impl<'a> LoginApp<'a> {
                 .unwrap_or_else(|| Duration::from_secs(0));
             if crossterm::event::poll(timeout)? {
                 if let Event::Key(key) = event::read()? {
-                    match key.code {
-                        KeyCode::Char(c) => self.on_key(c),
-                        _ => {}
+                    match self.input_mode {
+                        InputMode::Normal => match key.code {
+                            KeyCode::Char('e') => {
+                                self.input_mode = InputMode::Editing;
+                            }
+                            KeyCode::Char('q') => {
+                                return Ok(());
+                            }
+
+                            _ => {}
+                        }
+                        InputMode::Editing => match key.code {
+                            KeyCode::Enter => {
+                                self.input_idx += 1;
+
+                                if self.input_idx == 3 {
+                                    // Submit to server and do stuff
+                                }
+                            }
+                            KeyCode::Tab => {
+                                self.input_idx = (self.input_idx + 1) % 2;
+                            }
+                            KeyCode::Char(c) => {
+                                self.username_password[self.input_idx].push(c);
+                            }
+                            KeyCode::Backspace => {
+                                self.username_password[self.input_idx].pop();
+                            }
+                            KeyCode::Esc => {
+                                self.input_mode = InputMode::Normal
+                            }
+
+                            _ => {}
+                        },
                     }
                 }
             }
