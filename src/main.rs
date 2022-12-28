@@ -1,4 +1,5 @@
 mod login_app;
+mod event;
 
 use argh::FromArgs;
 use std::{error::Error, io, time::Duration};
@@ -6,7 +7,8 @@ use std::{error::Error, io, time::Duration};
 use crossterm::{
     event::{DisableMouseCapture, EnableMouseCapture},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen, SetTitle},
+    ExecutableCommand
 };
 use tui::{backend::CrosstermBackend, Terminal};
 
@@ -27,12 +29,14 @@ pub fn run(tick_rate: Duration, enhanced_graphics: bool) -> Result<(), Box<dyn E
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
     let backend = CrosstermBackend::new(stdout);
+    
     let mut terminal = Terminal::new(backend)?;
 
-    // create app and run it
-    let app = login_app::app::LoginApp::new("Hackchat", enhanced_graphics);
+    // Start event handler
+    let events = event::Events::new(tick_rate.as_millis() as u64);
 
-    let res = app.run_app(&mut terminal, tick_rate);
+    // create app and run it
+    let res = login_app::app::LoginApp::new("Hackchat", events, enhanced_graphics).run_app(&mut terminal, tick_rate);
 
     // restore terminal
     disable_raw_mode()?;

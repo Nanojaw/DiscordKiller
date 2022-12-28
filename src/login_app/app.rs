@@ -1,3 +1,5 @@
+use crate::event::Events;
+
 pub enum InputMode {
     Normal,
     Editing,
@@ -5,6 +7,8 @@ pub enum InputMode {
 
 pub struct LoginApp<'a> {
     pub title: &'a str,
+
+    pub events: Events,
 
     pub input_mode: InputMode,
     pub field_idx: usize,
@@ -17,9 +21,11 @@ pub struct LoginApp<'a> {
 }
 
 impl<'a> LoginApp<'a> {
-    pub fn new(title: &'a str, enhanced_graphics: bool) -> LoginApp<'a> {
+    pub fn new(title: &'a str, events: Events, enhanced_graphics: bool) -> LoginApp<'a> {
         LoginApp {
             title,
+
+            events: events,
 
             input_mode: InputMode::Normal,
             field_idx: 0,
