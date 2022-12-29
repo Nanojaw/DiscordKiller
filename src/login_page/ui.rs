@@ -4,7 +4,7 @@ use tui::{
     layout::{Alignment, Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Span, Spans, Text},
-    widgets::{Block, Borders, Paragraph, Sparkline, Wrap},
+    widgets::{Block, Borders, Paragraph},
     Frame,
 };
 
@@ -113,9 +113,9 @@ impl<'a> LoginPage<'a> {
                         chunks[self.field_idx + 1].y + 1,
                     )
                 } else if cursor_pos.unwrap().0 <= chunks[self.field_idx + 1].x {
-                    f.set_cursor(cursor_pos.unwrap().0 + 1, cursor_pos.unwrap().1);
+                    f.set_cursor(cursor_pos.unwrap().0 + 1, chunks[self.field_idx + 1].y + 1);
                 } else {
-                    f.set_cursor(cursor_pos.unwrap().0, cursor_pos.unwrap().1);
+                    f.set_cursor(cursor_pos.unwrap().0, chunks[self.field_idx + 1].y + 1);
                 }
             }
         }

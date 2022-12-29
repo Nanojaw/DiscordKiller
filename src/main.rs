@@ -2,7 +2,7 @@ mod login_page;
 mod event;
 
 use argh::FromArgs;
-use std::{error::Error, io, time::Duration, panic::{self, PanicInfo}};
+use std::{error::Error, io, time::Duration};
 
 
 

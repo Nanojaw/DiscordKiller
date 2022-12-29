@@ -1,7 +1,4 @@
-use std::ops::Deref;
-
 use crate::event::EventManager;
-use tui::{backend::Backend, Terminal};
 
 pub enum InputMode {
     Normal,

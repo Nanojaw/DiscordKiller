@@ -17,3 +17,5 @@ rand = "0.8.5"
 
 futures = "0.3.25"
 futures-timer = "3.0.2"
+
+unicode-segmentation = "1.10.0"

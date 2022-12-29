@@ -3,6 +3,10 @@ use crate::event::{Event, Key};
 use std::time::Duration;
 use tui::{backend::Backend, Terminal};
 
+use unicode_segmentation::UnicodeSegmentation;
+
+use crossterm::event::{KeyEvent, MouseEvent, MouseEventKind, MouseButton};
+
 impl<'a> LoginPage<'a> {
     pub fn handle_ce<B: Backend>(
         &mut self,
@@ -55,6 +59,17 @@ impl<'a> LoginPage<'a> {
                         Key::Tab => {
                             self.field_idx = (self.field_idx + 1) % 2;
 
+                            match self.field_idx {
+                                0 => {
+                                    cursor_pos = (cursor_pos.0, cursor_pos.1 - 3);
+                                }
+                                1 => {
+                                    cursor_pos = (cursor_pos.0, cursor_pos.1 + 3);
+                                }
+
+                                _ => {}
+                            }
+
                             terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
 
                             Ok(())
@@ -63,19 +78,30 @@ impl<'a> LoginPage<'a> {
                             cursor_pos = (cursor_pos.0 - 1, cursor_pos.1);
 
                             if cursor_pos.0 != 0 {
-                                if (cursor_pos.0 - 1) as usize == self.username_password[self.field_idx].len() {
+                                if (cursor_pos.0 - 1) as usize
+                                    == self.username_password[self.field_idx].chars().count()
+                                {
                                     self.username_password[self.field_idx].pop();
                                 } else {
-                                    self.username_password[self.field_idx].remove((cursor_pos.0 - 1) as usize);
+                                    let mut str_chars = UnicodeSegmentation::graphemes(
+                                        self.username_password[self.field_idx].as_str(),
+                                        true,
+                                    )
+                                    .map(|c| c.to_string())
+                                    .collect::<Vec<String>>();
+
+                                    str_chars.remove((cursor_pos.0 - 1) as usize);
+
+                                    self.username_password[self.field_idx] = String::new();
+                                    for str in str_chars {
+                                        self.username_password[self.field_idx]
+                                            .push_str(str.as_str());
+                                    }
                                 }
                             }
 
                             if self.field_idx == 1 {
                                 self.password_stars.pop();
-
-                                terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
-
-                                return Ok(());
                             }
 
                             terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
@@ -85,14 +111,21 @@ impl<'a> LoginPage<'a> {
                         Key::Char(c) => {
                             cursor_pos = (cursor_pos.0 + 1, cursor_pos.1);
 
-                            self.username_password[self.field_idx].insert((cursor_pos.0 - 2) as usize, c);
+                            let mut str_chars = UnicodeSegmentation::graphemes(
+                                self.username_password[self.field_idx].as_str(),
+                                true,
+                            )
+                            .map(|c| c.to_string())
+                            .collect::<Vec<String>>();
+
+                            str_chars.insert((cursor_pos.0 - 2) as usize, c.to_string());
+                            self.username_password[self.field_idx] = String::new();
+                            for str in str_chars {
+                                self.username_password[self.field_idx].push_str(str.as_str());
+                            }
 
                             if self.field_idx == 1 {
                                 self.password_stars.push('*');
-
-                                terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
-
-                                return Ok(());
                             }
 
                             terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
@@ -103,7 +136,7 @@ impl<'a> LoginPage<'a> {
                         Key::Left => {
                             cursor_pos = (cursor_pos.0 - 1, cursor_pos.1);
 
-                            terminal.set_cursor(cursor_pos.0 , cursor_pos.1)?;
+                            terminal.set_cursor(cursor_pos.0, cursor_pos.1)?;
 
                             terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
 
@@ -124,9 +157,24 @@ impl<'a> LoginPage<'a> {
                     },
                 }
             }
-            crossterm::event::Event::Mouse(cm) => Ok(()),
-            crossterm::event::Event::Paste(cp) => Ok(()),
-            crossterm::event::Event::Resize(width, height) => Ok(()),
+            crossterm::event::Event::Mouse(cm) => match cm.kind {
+                MouseEventKind::Down(cmd) => match cmd {
+                    MouseButton::Left => {
+                        cursor_pos = (cm.column, cm.row);
+
+                        terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
+
+                        Ok(())
+                    },
+                    MouseButton::Middle => todo!(),
+
+                    _ => Ok(())
+                },
+                
+                _ => Ok(())
+            },
+            crossterm::event::Event::Paste(_) => Ok(()),
+            crossterm::event::Event::Resize(_, _) => Ok(()),
         }
     }
 
