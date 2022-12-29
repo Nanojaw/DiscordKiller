@@ -1,3 +1,3 @@
-pub mod app;
+pub mod page;
 pub mod driver;
 pub mod ui;

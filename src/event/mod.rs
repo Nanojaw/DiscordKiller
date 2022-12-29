@@ -1,7 +1,7 @@
-mod events;
+mod event;
 mod key;
 
 pub use self::{
-  events::{Event, Events},
+  event::{EventManager, Event},
   key::Key,
 };

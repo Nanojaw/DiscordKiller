@@ -1,14 +1,14 @@
-use crate::login_app::app::{InputMode, LoginApp};
+use crate::login_page::page::{InputMode, LoginPage};
 use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Span, Spans, Text},
-    widgets::{Block, Borders, Paragraph, Wrap},
+    widgets::{Block, Borders, Paragraph, Wrap, Sparkline},
     Frame,
 };
 
-impl<'a> LoginApp<'a> {
+impl<'a, C: Backend> LoginPage<'a, C> {
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>) {
         let chunks = Layout::default()
             .direction(Direction::Vertical)

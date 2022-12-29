@@ -1,21 +1,57 @@
+use super::page::{InputMode, LoginPage};
+use crate::event::{Event, Key};
+use std::{
+    io::{Error, Result},
+    time::Duration,
+    time::Instant, ops::Deref,
+};
 use tui::{backend::Backend, Terminal};
-use super::app::{LoginApp, InputMode};
-use crate::event::{Events, Event, Key};
-use std::{time::Duration, time::Instant, io::{Result, Error}};
 
-impl<'a> LoginApp<'a> {
-    pub fn run_app<B: Backend>(mut self, terminal: &mut Terminal<B>, tick_rate: Duration,
+impl<'a, C: Backend> LoginPage<'a, C> {
+
+    pub fn handle_ce(&mut self, ce: crossterm::event::Event) {
+        match ce {
+            crossterm::event::Event::FocusGained => todo!(),
+            crossterm::event::Event::FocusLost => todo!(),
+            crossterm::event::Event::Key(ck) => {
+
+                match self.input_mode {
+                InputMode::Normal => match Key::from(ck) {
+                    Key::Ctrl('c') => self.should_quit = true,
+
+                    Key::Char('e') => {
+                        self.input_mode = InputMode::Editing;
+
+                        self.terminal.draw(|f| { self.draw(f) });
+                    },
+                    _ => {}
+                },
+                InputMode::Editing => match Key::from(ck) {
+                    _ => {}
+                },
+            }
+            },
+            crossterm::event::Event::Mouse(_) => todo!(),
+            crossterm::event::Event::Paste(_) => todo!(),
+            crossterm::event::Event::Resize(_, _) => todo!(),
+        }
+    }
+
+    pub fn on_tick(&self) {}
+
+    pub async fn run_app(
+        mut self,
+        tick_rate: Duration,
     ) -> std::io::Result<()> {
-        let mut last_tick = Instant::now();
         loop {
-            terminal.draw(|f| self.draw(f))?;
-    
-            let timeout = tick_rate
-                .checked_sub(last_tick.elapsed())
-                .unwrap_or_else(|| Duration::from_secs(0));
-            
-            let nxt_event = self.events.next();
+            let curr_event = self.event_manager.get(tick_rate).await;
 
+            match curr_event {
+                Event::CrosstermEvent(ce) => self.handle_ce(ce),
+                Event::Tick => self.on_tick(),
+            }
+
+            /*
             match nxt_event.is_ok() {
                 true => match nxt_event.unwrap() {
                     Event::Input(key) => {
@@ -27,13 +63,13 @@ impl<'a> LoginApp<'a> {
                                 Key::Char('q') => {
                                     return Ok(());
                                 }
-                                
+
                                 _ => {}
                             }
                             InputMode::Editing => match key {
                                 Key::Enter => {
                                     self.field_idx += 1;
-                                    
+
                                     if self.field_idx == 2 {
                                         // Submit to server and do stuff
                                     }
@@ -43,14 +79,14 @@ impl<'a> LoginApp<'a> {
                                 }
                                 Key::Char(c) => {
                                     self.username_password[self.field_idx].push(c);
-                                    
+
                                     if self.field_idx == 1 {
                                         self.password_stars.push('*');
                                     }
                                 }
                                 Key::Backspace => {
                                     self.username_password[self.field_idx].pop();
-                                    
+
                                     if self.field_idx == 1 {
                                         self.password_stars.pop();
                                     }
@@ -58,28 +94,24 @@ impl<'a> LoginApp<'a> {
                                 Key::Esc => {
                                     self.input_mode = InputMode::Normal
                                 }
-                                
+
                                 _ => {}
                             },
                         }
                     },
-                    Event::Tick => {
-    
-                    },
+                    _ => {}
                 },
                 false => todo!(),
             }
-            
-                /*
+            */
+            //println!("{:?}", Instant::now() - now);
+            /*
             if crossterm::event::poll(timeout)? {
                 if let Event::Key(key) = event::read()? {
-                    
+
                 }
             }
             */
-            if last_tick.elapsed() >= tick_rate {
-                last_tick = Instant::now();
-            }
             if self.should_quit {
                 return Ok(());
             }
