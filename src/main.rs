@@ -31,8 +31,8 @@ pub async fn run(tick_rate: Duration) -> Result<(), Box<dyn Error>> {
     let mut terminal = Terminal::new(backend)?;
 
     // create app and run it
-    let login = login_page::page::LoginPage::new("Hackchat", terminal);
-    login.run_app(tick_rate).await?;
+    let login = login_page::page::LoginPage::new("Hackchat");
+    login.run_app(&mut terminal, tick_rate).await?;
 
     // restore terminal
     disable_raw_mode()?;

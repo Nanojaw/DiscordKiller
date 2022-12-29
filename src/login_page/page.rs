@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use crate::event::EventManager;
 use tui::{backend::Backend, Terminal};
 
@@ -6,10 +8,8 @@ pub enum InputMode {
     Editing,
 }
 
-pub struct LoginPage<'a, C: Backend> {
+pub struct LoginPage<'a> {
     pub title: &'a str,
-
-    pub terminal: Terminal<C>,
 
     pub event_manager: EventManager,
 
@@ -22,12 +22,10 @@ pub struct LoginPage<'a, C: Backend> {
     pub should_quit: bool,
 }
 
-impl<'a, C: Backend> LoginPage<'a, C> {
-    pub fn new(title: &'a str, term: Terminal<C>) -> LoginPage<'a, C> {
+impl<'a> LoginPage<'a> {
+    pub fn new(title: &'a str) -> LoginPage<'a> {
         LoginPage {
             title,
-
-            terminal: term,
 
             event_manager: EventManager::new(),
 

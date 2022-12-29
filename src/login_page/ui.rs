@@ -8,7 +8,7 @@ use tui::{
     Frame,
 };
 
-impl<'a, C: Backend> LoginPage<'a, C> {
+impl<'a> LoginPage<'a> {
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>) {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
