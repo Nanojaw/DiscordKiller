@@ -4,12 +4,12 @@ use tui::{
     layout::{Alignment, Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Span, Spans, Text},
-    widgets::{Block, Borders, Paragraph, Wrap, Sparkline},
+    widgets::{Block, Borders, Paragraph, Sparkline, Wrap},
     Frame,
 };
 
 impl<'a> LoginPage<'a> {
-    pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>) {
+    pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>, cursor_pos: Option<(u16, u16)>) {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .margin(0)
@@ -99,14 +99,24 @@ impl<'a> LoginPage<'a> {
 
             InputMode::Editing => {
                 // Make the cursor visible and ask tui-rs to put it at the specified coordinates after rendering
-                f.set_cursor(
-                    // Put cursor past the end of the input text
-                    chunks[self.field_idx + 1].x
+                if cursor_pos.unwrap().0
+                    > chunks[self.field_idx + 1].x
                         + self.username_password[self.field_idx].chars().count() as u16
-                        + 1,
-                    // Move one line down, from the border to the input line
-                    chunks[self.field_idx + 1].y + 1,
-                )
+                        + 1
+                {
+                    f.set_cursor(
+                        // Put cursor past the end of the input text
+                        chunks[self.field_idx + 1].x
+                            + self.username_password[self.field_idx].chars().count() as u16
+                            + 1,
+                        // Move one line down, from the border to the input line
+                        chunks[self.field_idx + 1].y + 1,
+                    )
+                } else if cursor_pos.unwrap().0 <= chunks[self.field_idx + 1].x {
+                    f.set_cursor(cursor_pos.unwrap().0 + 1, cursor_pos.unwrap().1);
+                } else {
+                    f.set_cursor(cursor_pos.unwrap().0, cursor_pos.unwrap().1);
+                }
             }
         }
     }

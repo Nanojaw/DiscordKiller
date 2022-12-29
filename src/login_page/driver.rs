@@ -1,11 +1,6 @@
 use super::page::{InputMode, LoginPage};
 use crate::event::{Event, Key};
-use std::{
-    io::{Error, Result},
-    ops::Deref,
-    time::Duration,
-    time::Instant,
-};
+use std::time::Duration;
 use tui::{backend::Backend, Terminal};
 
 impl<'a> LoginPage<'a> {
@@ -14,6 +9,7 @@ impl<'a> LoginPage<'a> {
         terminal: &mut Terminal<B>,
         ce: crossterm::event::Event,
     ) -> std::io::Result<()> {
+        let mut cursor_pos = terminal.get_cursor().unwrap();
         match ce {
             crossterm::event::Event::FocusGained => Ok(()),
             crossterm::event::Event::FocusLost => Ok(()),
@@ -28,7 +24,7 @@ impl<'a> LoginPage<'a> {
                         Key::Char('e') => {
                             self.input_mode = InputMode::Editing;
 
-                            terminal.draw(|f| self.draw(f))?;
+                            terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
 
                             Ok(())
                         }
@@ -38,7 +34,7 @@ impl<'a> LoginPage<'a> {
                         Key::Enter => {
                             self.field_idx += 1;
 
-                            terminal.draw(|f| self.draw(f))?;
+                            terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
 
                             if self.field_idx == 2 {
                                 // Submit to server and do stuff
@@ -52,44 +48,74 @@ impl<'a> LoginPage<'a> {
                         Key::Esc => {
                             self.input_mode = InputMode::Normal;
 
-                            terminal.draw(|f| self.draw(f))?;
+                            terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
 
                             Ok(())
                         }
                         Key::Tab => {
                             self.field_idx = (self.field_idx + 1) % 2;
 
-                            terminal.draw(|f| self.draw(f))?;
+                            terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
 
                             Ok(())
                         }
                         Key::Backspace => {
-                            self.username_password[self.field_idx].pop();
+                            cursor_pos = (cursor_pos.0 - 1, cursor_pos.1);
+
+                            if cursor_pos.0 != 0 {
+                                if (cursor_pos.0 - 1) as usize == self.username_password[self.field_idx].len() {
+                                    self.username_password[self.field_idx].pop();
+                                } else {
+                                    self.username_password[self.field_idx].remove((cursor_pos.0 - 1) as usize);
+                                }
+                            }
 
                             if self.field_idx == 1 {
                                 self.password_stars.pop();
 
-                                terminal.draw(|f| self.draw(f))?;
+                                terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
 
                                 return Ok(());
                             }
 
-                            terminal.draw(|f| self.draw(f))?;
+                            terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
 
                             Ok(())
                         }
                         Key::Char(c) => {
-                            self.username_password[self.field_idx].push(c);
+                            cursor_pos = (cursor_pos.0 + 1, cursor_pos.1);
+
+                            self.username_password[self.field_idx].insert((cursor_pos.0 - 2) as usize, c);
 
                             if self.field_idx == 1 {
                                 self.password_stars.push('*');
 
-                                terminal.draw(|f| self.draw(f))?;
+                                terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
 
                                 return Ok(());
                             }
 
-                            terminal.draw(|f| self.draw(f))?;
+                            terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
+
+                            Ok(())
+                        }
+
+                        Key::Left => {
+                            cursor_pos = (cursor_pos.0 - 1, cursor_pos.1);
+
+                            terminal.set_cursor(cursor_pos.0 , cursor_pos.1)?;
+
+                            terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
+
+                            Ok(())
+                        }
+
+                        Key::Right => {
+                            cursor_pos = (cursor_pos.0 + 1, cursor_pos.1);
+
+                            terminal.set_cursor(cursor_pos.0, cursor_pos.1)?;
+
+                            terminal.draw(|f| self.draw(f, Some(cursor_pos)))?;
 
                             Ok(())
                         }
@@ -113,7 +139,7 @@ impl<'a> LoginPage<'a> {
         terminal: &mut Terminal<B>,
         tick_rate: Duration,
     ) -> std::io::Result<()> {
-        terminal.draw(|f| self.draw(f))?;
+        terminal.draw(|f| self.draw(f, None))?;
 
         loop {
             let curr_event = self.event_manager.get(tick_rate).await;
