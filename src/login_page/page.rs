@@ -1,5 +1,7 @@
 use crate::event::EventManager;
 
+use tui_textarea::TextArea;
+
 pub enum InputMode {
     Normal,
     Editing,
@@ -8,14 +10,14 @@ pub enum InputMode {
 pub struct LoginPage<'a> {
     pub title: &'a str,
 
+    pub input_fields: [TextArea<'a>; 2],
+
     pub event_manager: EventManager,
 
     pub input_mode: InputMode,
     pub field_idx: usize,
 
-    pub username_password: [String; 2],
-    pub password_stars: String,
-
+    pub first_draw: bool,
     pub should_quit: bool,
 }
 
@@ -24,14 +26,14 @@ impl<'a> LoginPage<'a> {
         LoginPage {
             title,
 
+            input_fields: [TextArea::default(), TextArea::default()],
+
             event_manager: EventManager::new(),
 
             input_mode: InputMode::Normal,
             field_idx: 0,
 
-            username_password: ["".to_string(), "".to_string()],
-            password_stars: String::new(),
-
+            first_draw: true,
             should_quit: false,
         }
     }
