@@ -72,7 +72,7 @@ impl<'a> LoginPage<'a> {
                     Span::styled("e", Style::default().add_modifier(Modifier::BOLD)),
                     Span::raw(" to start editing."),
                 ],
-                Style::default().add_modifier(Modifier::RAPID_BLINK),
+                Style::default(),
             ),
             InputMode::Editing => (
                 vec![
