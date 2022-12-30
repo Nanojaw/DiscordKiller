@@ -1,4 +1,4 @@
-use crate::login_page::page::{InputMode, LoginPage};
+use crate::{login_page::page::{InputMode, LoginPage}, styles::{HEADER_STYLE, TEXT_STYLE}};
 use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout},
@@ -33,18 +33,18 @@ impl<'a> LoginPage<'a> {
         ];
 
         let paragraph = Paragraph::new(text.clone())
-            .style(Style::default().fg(Color::Blue))
+            .style(HEADER_STYLE.add_modifier(Modifier::SLOW_BLINK))
             .alignment(Alignment::Center);
         f.render_widget(paragraph, chunks[0]);
 
         let username = Paragraph::new(self.username_password[0].as_ref())
             .style(match self.input_mode {
-                InputMode::Normal => Style::default(),
+                InputMode::Normal => TEXT_STYLE,
                 InputMode::Editing => match self.field_idx {
-                    0 => Style::default().fg(Color::Yellow),
-                    1 => Style::default(),
+                    0 => TEXT_STYLE.fg(Color::Yellow),
+                    1 => TEXT_STYLE,
 
-                    _ => Style::default(),
+                    _ => TEXT_STYLE,
                 },
             })
             .block(Block::default().borders(Borders::ALL).title("Username"));
@@ -52,12 +52,12 @@ impl<'a> LoginPage<'a> {
 
         let password = Paragraph::new(self.password_stars.as_ref())
             .style(match self.input_mode {
-                InputMode::Normal => Style::default(),
+                InputMode::Normal => TEXT_STYLE,
                 InputMode::Editing => match self.field_idx {
-                    0 => Style::default(),
-                    1 => Style::default().fg(Color::Yellow),
+                    0 => TEXT_STYLE,
+                    1 => TEXT_STYLE.fg(Color::Yellow),
 
-                    _ => Style::default(),
+                    _ => TEXT_STYLE,
                 },
             })
             .block(Block::default().borders(Borders::ALL).title("Password"));
@@ -72,7 +72,7 @@ impl<'a> LoginPage<'a> {
                     Span::styled("e", Style::default().add_modifier(Modifier::BOLD)),
                     Span::raw(" to start editing."),
                 ],
-                Style::default(),
+                TEXT_STYLE,
             ),
             InputMode::Editing => (
                 vec![
@@ -84,7 +84,7 @@ impl<'a> LoginPage<'a> {
                     Span::styled("Enter", Style::default().add_modifier(Modifier::BOLD)),
                     Span::raw(" to move to the next field or submit"),
                 ],
-                Style::default(),
+                TEXT_STYLE,
             ),
         };
         let mut text = Text::from(Spans::from(msg));

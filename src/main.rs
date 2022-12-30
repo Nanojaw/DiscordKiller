@@ -1,5 +1,6 @@
 mod login_page;
 mod event;
+mod styles;
 
 use argh::FromArgs;
 use std::{error::Error, io, time::Duration};
