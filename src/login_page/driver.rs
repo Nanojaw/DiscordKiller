@@ -63,6 +63,18 @@ impl<'a> LoginPage<'a> {
                             terminal.draw(|f| self.draw(f, Some(tui_textarea::Input::from(ck))))?;
                             Ok(())
                         }
+                        Key::Ctrl('r') => match self.field_idx {
+                            0 => Ok(()),
+                            1 => {
+                                self.render_stars = !self.render_stars;
+
+                                terminal.draw(|f| self.draw(f, None))?;
+
+                                Ok(())
+                            }
+
+                            _ => Ok(()),
+                        },
                         Key::Char(_) => {
                             terminal.draw(|f| self.draw(f, Some(tui_textarea::Input::from(ck))))?;
                             Ok(())

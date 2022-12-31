@@ -17,7 +17,7 @@ pub struct LoginPage<'a> {
     pub input_mode: InputMode,
     pub field_idx: usize,
 
-    pub first_draw: bool,
+    pub render_stars: bool,
     pub should_quit: bool,
 }
 
@@ -33,7 +33,7 @@ impl<'a> LoginPage<'a> {
             input_mode: InputMode::Normal,
             field_idx: 0,
 
-            first_draw: true,
+            render_stars: true,
             should_quit: false,
         }
     }
