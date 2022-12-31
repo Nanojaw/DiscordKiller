@@ -1,6 +1,6 @@
 use crate::{
     login_page::page::{InputMode, LoginPage},
-    styles::{HEADER, SELECTED_TEXT, TEXT, CURSOR},
+    styles::{CURSOR, HEADER, SELECTED_TEXT, TEXT},
 };
 use tui::{
     backend::Backend,
@@ -11,7 +11,7 @@ use tui::{
     Frame,
 };
 
-use tui_textarea::{Input};
+use tui_textarea::Input;
 
 impl<'a> LoginPage<'a> {
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>, field_cmd: Option<Input>) {
@@ -55,7 +55,7 @@ impl<'a> LoginPage<'a> {
 
         self.input_fields[0].set_block(Block::default().borders(Borders::all()).title("Username"));
         self.input_fields[1].set_block(Block::default().borders(Borders::all()).title("Password"));
-        
+
         self.input_fields[0].set_style(match self.input_mode {
             InputMode::Normal => TEXT,
             InputMode::Editing => match self.field_idx {

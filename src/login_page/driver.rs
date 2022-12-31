@@ -3,10 +3,6 @@ use crate::event::{Event, Key};
 use std::time::Duration;
 use tui::{backend::Backend, Terminal};
 
-
-
-
-
 impl<'a> LoginPage<'a> {
     pub fn handle_ce<B: Backend>(
         &mut self,

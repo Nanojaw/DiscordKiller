@@ -1,16 +1,14 @@
-mod login_page;
 mod event;
+mod login_page;
 mod styles;
 
 use argh::FromArgs;
 use std::{error::Error, io, time::Duration};
 
-
-
 use crossterm::{
     event::{DisableMouseCapture, EnableMouseCapture},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen}
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use tui::{backend::CrosstermBackend, Terminal};
 
@@ -28,7 +26,7 @@ pub async fn run(tick_rate: Duration) -> Result<(), Box<dyn Error>> {
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
     let backend = CrosstermBackend::new(stdout);
-    
+
     let mut terminal = Terminal::new(backend)?;
 
     // create app and run it
