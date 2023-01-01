@@ -13,6 +13,7 @@ impl<'a> LoginPage<'a> {
             SelectedWidget::PasswordInput => {
                 self.password_input.input(tui_textarea::Input::from(key));
             }
+            _ => {}
         }
         self.should_redraw = true;
     }
@@ -27,7 +28,12 @@ impl<'a> LoginPage<'a> {
                         self.selected_widget = SelectedWidget::PasswordInput;
                         self.should_redraw = true;
                     }
-                    SelectedWidget::PasswordInput => self.should_submit = true,
+                    SelectedWidget::PasswordInput => {
+                        self.selected_widget = SelectedWidget::LoginButton;
+                        self.should_redraw = true;
+                    }
+                    SelectedWidget::LoginButton => self.should_submit = true,
+                    SelectedWidget::RegisterLink => self.should_register = true,
                 },
                 Key::Tab => match self.selected_widget {
                     SelectedWidget::UsernameInput => {
@@ -35,6 +41,14 @@ impl<'a> LoginPage<'a> {
                         self.should_redraw = true;
                     }
                     SelectedWidget::PasswordInput => {
+                        self.selected_widget = SelectedWidget::LoginButton;
+                        self.should_redraw = true;
+                    }
+                    SelectedWidget::LoginButton => {
+                        self.selected_widget = SelectedWidget::RegisterLink;
+                        self.should_redraw = true;
+                    }
+                    SelectedWidget::RegisterLink => {
                         self.selected_widget = SelectedWidget::UsernameInput;
                         self.should_redraw = true;
                     }

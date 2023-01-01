@@ -1,27 +1,28 @@
 use crate::{
     login_page::page::{LoginPage, SelectedWidget},
-    styles::{BORDER, BORDER_SELECTED, CURSOR, HEADER, HELP_MENU, TEXT, TEXT_SELECTED},
+    styles::{BUTTON, CURSOR, DEFAULT, HEADER, SELECTED, SELECTED_BUTTON},
 };
-use reqwest::header;
+
 use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout},
-    style::{Modifier, Style},
-    text::{Span, Spans, Text},
+    style::Style,
+    text::{Span, Spans},
     widgets::{Block, Borders, Paragraph},
     Frame,
 };
-
-use tui_textarea::{CursorMove, Input};
 
 impl<'a> LoginPage<'a> {
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>) {
         let main_layout = Layout::default()
             .direction(Direction::Vertical)
             .constraints([
-                Constraint::Min(6),    // Header
-                Constraint::Length(3), // Username
-                Constraint::Length(3), // Password
+                Constraint::Ratio(1, 2), // Header
+                Constraint::Length(3),   // Username
+                Constraint::Length(3),   // Password
+                Constraint::Length(1),   // Login button
+                Constraint::Min(1),      // Register
+                Constraint::Length(1),   // Help message
             ])
             .split(f.size());
 
@@ -52,13 +53,13 @@ impl<'a> LoginPage<'a> {
                 .borders(Borders::all())
                 .title("Username")
                 .border_style(match self.selected_widget {
-                    SelectedWidget::UsernameInput => BORDER_SELECTED,
-                    _ => BORDER,
+                    SelectedWidget::UsernameInput => SELECTED,
+                    _ => DEFAULT,
                 }),
         );
         self.username_input.set_style(match self.selected_widget {
-            SelectedWidget::UsernameInput => TEXT_SELECTED,
-            _ => TEXT,
+            SelectedWidget::UsernameInput => SELECTED,
+            _ => DEFAULT,
         });
         self.username_input.set_cursor_line_style(Style::default());
         self.username_input
@@ -72,13 +73,13 @@ impl<'a> LoginPage<'a> {
                 .borders(Borders::all())
                 .title("Password")
                 .border_style(match self.selected_widget {
-                    SelectedWidget::PasswordInput => BORDER_SELECTED,
-                    _ => BORDER,
+                    SelectedWidget::PasswordInput => SELECTED,
+                    _ => DEFAULT,
                 }),
         );
         self.password_input.set_style(match self.selected_widget {
-            SelectedWidget::PasswordInput => TEXT_SELECTED,
-            _ => TEXT,
+            SelectedWidget::PasswordInput => SELECTED,
+            _ => DEFAULT,
         });
         self.password_input.set_cursor_line_style(Style::default());
         self.password_input
@@ -100,5 +101,36 @@ impl<'a> LoginPage<'a> {
         } else {
             f.render_widget(self.password_input.widget(), main_layout[2]);
         }
+
+        // Create the login button
+        let login = Paragraph::new(Span::styled(
+            "Login",
+            match self.selected_widget {
+                SelectedWidget::LoginButton => SELECTED_BUTTON,
+                _ => BUTTON,
+            },
+        ))
+        .alignment(Alignment::Center);
+        f.render_widget(login, main_layout[3]);
+
+        // Create the register link
+        let register = Paragraph::new(Span::styled(
+            "No account? Register!",
+            match self.selected_widget {
+                SelectedWidget::RegisterLink => SELECTED,
+                _ => DEFAULT,
+            },
+        ))
+        .alignment(Alignment::Center);
+        f.render_widget(register, main_layout[4]);
+
+        // Create the help message at the bottom
+        let help_text = vec![Spans::from(
+            "Press ctrl+q to quit, press ctrl+h to hide password",
+        )];
+        let help_message = Paragraph::new(help_text)
+            .style(DEFAULT)
+            .alignment(Alignment::Center);
+        f.render_widget(help_message, main_layout[5]);
     }
 }
