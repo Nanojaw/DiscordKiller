@@ -2,23 +2,25 @@ use crate::event::EventManager;
 
 use tui_textarea::TextArea;
 
-pub enum InputMode {
-    Normal,
-    Editing,
+pub enum SelectedWidget {
+    UsernameInput,
+    PasswordInput,
 }
 
 pub struct LoginPage<'a> {
     pub title: &'a str,
 
-    pub input_fields: [TextArea<'a>; 2],
+    pub username_input: TextArea<'a>,
+    pub password_input: TextArea<'a>,
 
     pub event_manager: EventManager,
 
-    pub input_mode: InputMode,
-    pub field_idx: usize,
+    pub selected_widget: SelectedWidget,
 
-    pub render_stars: bool,
+    pub hide_password: bool,
     pub should_quit: bool,
+    pub should_redraw: bool,
+    pub should_submit: bool,
 }
 
 impl<'a> LoginPage<'a> {
@@ -26,15 +28,17 @@ impl<'a> LoginPage<'a> {
         LoginPage {
             title,
 
-            input_fields: [TextArea::default(), TextArea::default()],
+            username_input: TextArea::default(),
+            password_input: TextArea::default(),
 
             event_manager: EventManager::new(),
 
-            input_mode: InputMode::Normal,
-            field_idx: 0,
+            selected_widget: SelectedWidget::UsernameInput,
 
-            render_stars: true,
+            hide_password: true,
             should_quit: false,
+            should_redraw: false,
+            should_submit: false,
         }
     }
 }

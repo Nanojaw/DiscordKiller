@@ -1,107 +1,63 @@
-use super::page::{InputMode, LoginPage};
+use super::page::{LoginPage, SelectedWidget};
 use crate::event::{Event, Key};
+use crossterm::event::KeyEvent;
 use std::time::Duration;
 use tui::{backend::Backend, Terminal};
 
 impl<'a> LoginPage<'a> {
-    pub fn handle_ce<B: Backend>(
-        &mut self,
-        terminal: &mut Terminal<B>,
-        ce: crossterm::event::Event,
-    ) -> std::io::Result<()> {
-        match ce {
-            crossterm::event::Event::FocusGained => Ok(()),
-            crossterm::event::Event::FocusLost => Ok(()),
-            crossterm::event::Event::Key(ck) => {
-                match self.input_mode {
-                    InputMode::Normal => match Key::from(ck) {
-                        Key::Ctrl('c') | Key::Char('q') => {
-                            self.should_quit = true;
-                            Ok(())
-                        }
-
-                        Key::Char('e') => {
-                            self.input_mode = InputMode::Editing;
-
-                            terminal.draw(|f| self.draw(f, None))?;
-
-                            Ok(())
-                        }
-                        _ => Ok(()),
-                    },
-                    InputMode::Editing => match Key::from(ck) {
-                        Key::Enter => {
-                            self.field_idx += 1;
-
-                            terminal.draw(|f| self.draw(f, None))?;
-
-                            if self.field_idx == 2 {
-                                // Submit to server and do stuff
-
-                                self.should_quit = true;
-
-                                return Ok(());
-                            }
-
-                            Ok(())
-                        }
-                        Key::Esc => {
-                            self.input_mode = InputMode::Normal;
-
-                            terminal.draw(|f| self.draw(f, None))?;
-
-                            Ok(())
-                        }
-                        Key::Tab => {
-                            self.field_idx = (self.field_idx + 1) % 2;
-
-                            terminal.draw(|f| self.draw(f, None))?;
-
-                            Ok(())
-                        }
-                        Key::Backspace => {
-                            terminal.draw(|f| self.draw(f, Some(tui_textarea::Input::from(ck))))?;
-                            Ok(())
-                        }
-                        Key::Ctrl('r') => match self.field_idx {
-                            0 => Ok(()),
-                            1 => {
-                                self.render_stars = !self.render_stars;
-
-                                terminal.draw(|f| self.draw(f, None))?;
-
-                                Ok(())
-                            }
-
-                            _ => Ok(()),
-                        },
-                        Key::Char(_) => {
-                            terminal.draw(|f| self.draw(f, Some(tui_textarea::Input::from(ck))))?;
-                            Ok(())
-                        }
-
-                        Key::Left => {
-                            terminal.draw(|f| self.draw(f, Some(tui_textarea::Input::from(ck))))?;
-                            Ok(())
-                        }
-
-                        Key::Right => {
-                            terminal.draw(|f| self.draw(f, Some(tui_textarea::Input::from(ck))))?;
-                            Ok(())
-                        }
-
-                        _ => Ok(()),
-                    },
-                }
+    fn input_key(&mut self, key: KeyEvent) {
+        match self.selected_widget {
+            SelectedWidget::UsernameInput => {
+                self.username_input.input(tui_textarea::Input::from(key));
             }
-            crossterm::event::Event::Mouse(_) => Ok(()),
-            crossterm::event::Event::Paste(_) => Ok(()),
-            crossterm::event::Event::Resize(_, _) => Ok(()),
+            SelectedWidget::PasswordInput => {
+                self.password_input.input(tui_textarea::Input::from(key));
+            }
+        }
+        self.should_redraw = true;
+    }
+
+    fn handle_ce(&mut self, ce: crossterm::event::Event) {
+        match ce {
+            crossterm::event::Event::FocusGained => {}
+            crossterm::event::Event::FocusLost => {}
+            crossterm::event::Event::Key(ck) => match Key::from(ck) {
+                Key::Enter => match self.selected_widget {
+                    SelectedWidget::UsernameInput => {
+                        self.selected_widget = SelectedWidget::PasswordInput;
+                        self.should_redraw = true;
+                    }
+                    SelectedWidget::PasswordInput => self.should_submit = true,
+                },
+                Key::Tab => match self.selected_widget {
+                    SelectedWidget::UsernameInput => {
+                        self.selected_widget = SelectedWidget::PasswordInput;
+                        self.should_redraw = true;
+                    }
+                    SelectedWidget::PasswordInput => {
+                        self.selected_widget = SelectedWidget::UsernameInput;
+                        self.should_redraw = true;
+                    }
+                },
+                Key::Ctrl('q') => {
+                    self.should_quit = true;
+                }
+                Key::Ctrl('h') => {
+                    self.hide_password = !self.hide_password;
+                    self.should_redraw = true;
+                }
+                _ => self.input_key(ck),
+            },
+            crossterm::event::Event::Mouse(_) => {}
+            crossterm::event::Event::Paste(_) => {}
+            crossterm::event::Event::Resize(_, _) => {
+                self.should_redraw = true;
+            }
         }
     }
 
-    pub fn on_tick(&self) -> std::io::Result<()> {
-        Ok(())
+    fn on_tick(&mut self) {
+        //self.should_redraw = true;
     }
 
     pub async fn run_app<B: Backend>(
@@ -109,14 +65,19 @@ impl<'a> LoginPage<'a> {
         terminal: &mut Terminal<B>,
         tick_rate: Duration,
     ) -> std::io::Result<()> {
-        terminal.draw(|f| self.draw(f, None))?;
+        terminal.draw(|f| self.draw(f))?;
 
         loop {
             let curr_event = self.event_manager.get(tick_rate).await;
 
             match curr_event {
-                Event::CrosstermEvent(ce) => self.handle_ce(terminal, ce)?,
-                Event::Tick => self.on_tick()?,
+                Event::CrosstermEvent(ce) => self.handle_ce(ce),
+                Event::Tick => self.on_tick(),
+            }
+
+            if self.should_redraw {
+                terminal.draw(|f| self.draw(f))?;
+                self.should_redraw = false;
             }
 
             if self.should_quit {
