@@ -12,6 +12,25 @@ use crossterm::{
 };
 use tui::{backend::CrosstermBackend, Terminal};
 
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
+pub struct UserFromServer {
+    pub username: String,
+    pub servers: Vec<String>,
+    pub password: String,
+}
+
+impl UserFromServer {
+    pub fn default() -> Self {
+        Self {
+            username: "".to_string(),
+            servers: vec![],
+            password: "".to_string(),
+        }
+    }
+}
+
 /// DiscordKiller args
 #[derive(Debug, FromArgs)]
 struct Cli {
@@ -41,10 +60,12 @@ pub async fn run(
 
     let mut terminal = Terminal::new(backend)?;
 
+    let mut user: UserFromServer = UserFromServer::default();
+
     // create app and run it
     if change_profile {
         let login = login_page::page::LoginPage::new("Hackchat");
-        login.run_app(&mut terminal, tick_rate).await?;
+        user = login.run_app(&mut terminal, tick_rate).await?;
 
         /*
         let change_profile = change_profile_page::page::changeProfilePage::new("Hackchat");
@@ -53,7 +74,7 @@ pub async fn run(
     } else {
         if login {
             let login = login_page::page::LoginPage::new("Hackchat");
-            login.run_app(&mut terminal, tick_rate).await?;
+            user = login.run_app(&mut terminal, tick_rate).await?;
         } else {
             /*
             let register = register_page::page::registerPage::new("Hackchat");

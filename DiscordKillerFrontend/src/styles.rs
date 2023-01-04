@@ -31,7 +31,7 @@ pub const CURSOR: Style = Style {
     sub_modifier: Modifier::empty(),
 };
 
-// Button 
+// Button
 
 pub const BUTTON: Style = Style {
     fg: Some(Color::Black), // Set to terminal color black to mimic background

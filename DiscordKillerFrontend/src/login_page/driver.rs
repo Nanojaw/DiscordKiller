@@ -1,5 +1,8 @@
 use super::page::{LoginPage, SelectedWidget};
-use crate::event::{Event, Key};
+use crate::{
+    event::{Event, Key},
+    UserFromServer,
+};
 use crossterm::event::KeyEvent;
 use std::{io::Read, time::Duration};
 use tui::{backend::Backend, Terminal};
@@ -78,7 +81,7 @@ impl<'a> LoginPage<'a> {
         mut self,
         terminal: &mut Terminal<B>,
         tick_rate: Duration,
-    ) -> std::io::Result<()> {
+    ) -> std::io::Result<UserFromServer> {
         terminal.draw(|f| self.draw(f))?;
 
         loop {
@@ -95,10 +98,11 @@ impl<'a> LoginPage<'a> {
             }
 
             if self.should_quit {
-                return Ok(());
+                return Ok(UserFromServer::default());
             } else if self.should_submit {
-                let mut username = self.username_input.lines()[0].clone().to_string();
-                let mut password = self.password_input.lines()[0].clone().to_string();
+                use sha256::digest;
+                let username = self.username_input.lines()[0].clone().to_string();
+                let password = digest(self.password_input.lines()[0].clone().to_string());
 
                 let resp = self
                     .http_client
@@ -123,7 +127,15 @@ impl<'a> LoginPage<'a> {
                 } else {
                     let resp_str = String::from_utf8_lossy(&resp_bytes);
 
-                    println!("{}", resp_str);
+                    if username == "" || password == "" {
+                        // Error user details are not provided
+
+                        self.should_redraw = true;
+                    } else {
+                        let user: UserFromServer = serde_json::from_str(&resp_str)?;
+
+                        return Ok(user);
+                    }
                 }
                 self.should_submit = false;
             } else if self.should_register {

@@ -108,7 +108,10 @@ impl<'a> LoginPage<'a> {
             let char_count = hidden_input.lines().concat().chars().count();
             hidden_input.delete_str(0, char_count);
             hidden_input.insert_str("*".repeat(char_count));
-            hidden_input.move_cursor(tui_textarea::CursorMove::Jump(self.password_input.cursor().0 as u16, self.password_input.cursor().1 as u16));
+            hidden_input.move_cursor(tui_textarea::CursorMove::Jump(
+                self.password_input.cursor().0 as u16,
+                self.password_input.cursor().1 as u16,
+            ));
             f.render_widget(hidden_input.widget(), input_field_layout[1])
         } else {
             f.render_widget(self.password_input.widget(), input_field_layout[1]);

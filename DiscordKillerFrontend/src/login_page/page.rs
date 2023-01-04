@@ -47,7 +47,7 @@ impl<'a> LoginPage<'a> {
             should_quit: false,
             should_redraw: false,
             should_submit: false,
-            should_register: false
+            should_register: false,
         }
     }
 }
