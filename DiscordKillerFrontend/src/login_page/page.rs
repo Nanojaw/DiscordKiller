@@ -1,7 +1,13 @@
-use crate::event::EventManager;
+use crate::{event::EventManager, UserFromServer};
 
 use reqwest::Client;
 use tui_textarea::TextArea;
+
+pub enum NextPage {
+    Register,
+    Main(UserFromServer),
+    Quit,
+}
 
 pub enum SelectedWidget {
     UsernameInput,

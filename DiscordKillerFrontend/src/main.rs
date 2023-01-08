@@ -1,5 +1,6 @@
 mod event;
 mod login_page;
+mod register_page;
 mod styles;
 
 use argh::FromArgs;
@@ -12,7 +13,7 @@ use crossterm::{
 };
 use tui::{backend::CrosstermBackend, Terminal};
 
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone, PartialEq)]
 pub struct UserFromServer {
@@ -47,6 +48,13 @@ struct Cli {
     change_profile: bool,
 }
 
+enum Pages {
+    Login,
+    Register,
+    CreateUser,
+    Main,
+}
+
 pub async fn run(
     tick_rate: Duration,
     login: bool,
@@ -60,32 +68,39 @@ pub async fn run(
 
     let mut terminal = Terminal::new(backend)?;
 
-    let mut user: UserFromServer = UserFromServer::default();
+    let mut current_page = Pages::Login;
 
-    // create app and run it
-    if change_profile {
-        let login = login_page::page::LoginPage::new("Hackchat");
-        user = login.run_app(&mut terminal, tick_rate).await?;
+    let mut user: UserFromServer;
 
-        /*
-        let change_profile = change_profile_page::page::changeProfilePage::new("Hackchat");
-        change_profile_page.run_app(&mut terminal, tick_rate).await?;
-        */
-    } else {
-        if login {
-            let login = login_page::page::LoginPage::new("Hackchat");
-            user = login.run_app(&mut terminal, tick_rate).await?;
-        } else {
-            /*
-            let register = register_page::page::registerPage::new("Hackchat");
-            register.run_app(&mut terminal, tick_rate).await?;
-            */
+    // main loop
+    loop {
+        match current_page {
+            Pages::Login => {
+                let login_page = login_page::page::LoginPage::new("Hackchat");
+                let next_page = login_page.run_page(&mut terminal, tick_rate).await?;
+
+                match next_page {
+                    login_page::page::NextPage::Register => current_page = Pages::Register,
+                    login_page::page::NextPage::Main(response) => {
+                        user = response;
+                        current_page = Pages::Main
+                    }
+                    login_page::page::NextPage::Quit => break,
+                }
+            }
+            Pages::Register => {
+                let next_page = register_page::page::RegisterPage::new("Hackchat")
+                    .run_page(&mut terminal, tick_rate)
+                    .await?;
+                    match next_page {
+                        register_page::page::NextPage::CreateUser => current_page = Pages::CreateUser,
+                        register_page::page::NextPage::Login => current_page = Pages::Login,
+                        register_page::page::NextPage::Quit => break,
+                    }
+            }
+            Pages::CreateUser => todo!(),
+            Pages::Main => todo!(),
         }
-
-        /*
-        let main_page = main_page::page::mainPage::new("Hackchat");
-        main_page.run_app(&mut terminal, tick_rate).await?;
-        */
     }
 
     // restore terminal

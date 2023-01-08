@@ -1,6 +1,6 @@
 use crate::{
     login_page::page::{LoginPage, SelectedWidget},
-    styles::{BUTTON, CURSOR, DEFAULT, HEADER, SELECTED, SELECTED_BUTTON},
+    styles::{CURSOR, DEFAULT, HEADER, SELECTED},
 };
 
 use tui::{
@@ -121,8 +121,8 @@ impl<'a> LoginPage<'a> {
         let login = Paragraph::new(Span::styled(
             "Login",
             match self.selected_widget {
-                SelectedWidget::LoginButton => SELECTED_BUTTON,
-                _ => BUTTON,
+                SelectedWidget::LoginButton => SELECTED,
+                _ => DEFAULT,
             },
         ))
         .alignment(Alignment::Center);

@@ -30,18 +30,3 @@ pub const CURSOR: Style = Style {
     add_modifier: Modifier::BOLD,
     sub_modifier: Modifier::empty(),
 };
-
-// Button
-
-pub const BUTTON: Style = Style {
-    fg: Some(Color::Black), // Set to terminal color black to mimic background
-    bg: DEFAULT.fg,
-    add_modifier: Modifier::empty(),
-    sub_modifier: Modifier::empty(),
-};
-pub const SELECTED_BUTTON: Style = Style {
-    fg: Some(Color::Black), // Set to terminal color black to mimic background
-    bg: SELECTED.fg,
-    add_modifier: Modifier::empty(),
-    sub_modifier: Modifier::empty(),
-};

@@ -1,10 +1,10 @@
-use super::page::{LoginPage, SelectedWidget};
+use super::page::{LoginPage, SelectedWidget, NextPage};
 use crate::{
     event::{Event, Key},
     UserFromServer,
 };
 use crossterm::event::KeyEvent;
-use std::{io::Read, time::Duration};
+use std::time::Duration;
 use tui::{backend::Backend, Terminal};
 
 impl<'a> LoginPage<'a> {
@@ -77,11 +77,11 @@ impl<'a> LoginPage<'a> {
         //self.should_redraw = true;
     }
 
-    pub async fn run_app<B: Backend>(
+    pub async fn run_page<B: Backend>(
         mut self,
         terminal: &mut Terminal<B>,
         tick_rate: Duration,
-    ) -> std::io::Result<UserFromServer> {
+    ) -> std::io::Result<NextPage> {
         terminal.draw(|f| self.draw(f))?;
 
         loop {
@@ -98,7 +98,7 @@ impl<'a> LoginPage<'a> {
             }
 
             if self.should_quit {
-                return Ok(UserFromServer::default());
+                return Ok(NextPage::Quit);
             } else if self.should_submit {
                 use sha256::digest;
                 let username = self.username_input.lines()[0].clone().to_string();
@@ -134,11 +134,12 @@ impl<'a> LoginPage<'a> {
                     } else {
                         let user: UserFromServer = serde_json::from_str(&resp_str)?;
 
-                        return Ok(user);
+                        return Ok(NextPage::Main(user));
                     }
                 }
                 self.should_submit = false;
             } else if self.should_register {
+                return Ok(NextPage::Register);
             }
         }
     }
