@@ -26,35 +26,32 @@ impl<'a> LoginPage<'a> {
             crossterm::event::Event::FocusGained => {}
             crossterm::event::Event::FocusLost => {}
             crossterm::event::Event::Key(ck) => match Key::from(ck) {
-                Key::Enter => match self.selected_widget {
-                    SelectedWidget::UsernameInput => {
-                        self.selected_widget = SelectedWidget::PasswordInput;
-                        self.should_redraw = true;
+
+                Key::Enter => {
+                    self.add_selected_widget_counter();
+
+                    match self.selected_widget {
+                        SelectedWidget::UsernameInput => {
+                            self.selected_widget = SelectedWidget::PasswordInput;
+                            self.should_redraw = true;
+                        }
+                        SelectedWidget::PasswordInput => {
+                            self.selected_widget = SelectedWidget::LoginButton;
+                            self.should_redraw = true;
+                        }
+                        SelectedWidget::LoginButton => self.should_submit = true,
+                        SelectedWidget::RegisterLink => self.should_register = true,
                     }
-                    SelectedWidget::PasswordInput => {
-                        self.selected_widget = SelectedWidget::LoginButton;
-                        self.should_redraw = true;
-                    }
-                    SelectedWidget::LoginButton => self.should_submit = true,
-                    SelectedWidget::RegisterLink => self.should_register = true,
                 },
-                Key::Tab => match self.selected_widget {
-                    SelectedWidget::UsernameInput => {
-                        self.selected_widget = SelectedWidget::PasswordInput;
-                        self.should_redraw = true;
-                    }
-                    SelectedWidget::PasswordInput => {
-                        self.selected_widget = SelectedWidget::LoginButton;
-                        self.should_redraw = true;
-                    }
-                    SelectedWidget::LoginButton => {
-                        self.selected_widget = SelectedWidget::RegisterLink;
-                        self.should_redraw = true;
-                    }
-                    SelectedWidget::RegisterLink => {
-                        self.selected_widget = SelectedWidget::UsernameInput;
-                        self.should_redraw = true;
-                    }
+                Key::Tab => {
+                    self.add_selected_widget_counter();
+                    self.selected_widget = SelectedWidget::from_i32(self.selected_widget_counter);
+                    self.should_redraw = true;
+                },
+                Key::ShiftTab => {
+                    self.subtract_selected_widget_counter();
+                    self.selected_widget = SelectedWidget::from_i32(self.selected_widget_counter);
+                    self.should_redraw = true;
                 },
                 Key::Ctrl('q') => {
                     self.should_quit = true;
@@ -93,6 +90,7 @@ impl<'a> LoginPage<'a> {
             }
 
             if self.should_redraw {
+                self.error = false;
                 terminal.draw(|f| self.draw(f))?;
                 self.should_redraw = false;
             }
@@ -103,6 +101,14 @@ impl<'a> LoginPage<'a> {
                 use sha256::digest;
                 let username = self.username_input.lines()[0].clone().to_string();
                 let password = digest(self.password_input.lines()[0].clone().to_string());
+
+                if username == "" || password == "" {
+                    self.error = true;
+                    self.error_message = "User was not provided";
+                    terminal.draw(|f| self.draw(f))?;
+                    self.should_submit = false;
+                    continue;
+                }
 
                 let resp = self
                     .http_client
@@ -117,25 +123,20 @@ impl<'a> LoginPage<'a> {
                 let resp_bytes = resp.bytes().await.unwrap().to_vec();
 
                 if resp_bytes == b"User does not exist" {
-                    // Display error
-
-                    self.should_redraw = true;
+                    self.error = true;
+                    self.error_message = "User does not exist";
+                    terminal.draw(|f| self.draw(f))?;
+                    self.should_submit = false;
                 } else if resp_bytes == b"Wrong password" {
-                    // Display error
-
-                    self.should_redraw = true;
+                    self.error = true;
+                    self.error_message = "Wrong password";
+                    terminal.draw(|f| self.draw(f))?;
+                    self.should_submit = false;
                 } else {
                     let resp_str = String::from_utf8_lossy(&resp_bytes);
+                    let user: UserFromServer = serde_json::from_str(&resp_str)?;
 
-                    if username == "" || password == "" {
-                        // Error user details are not provided
-
-                        self.should_redraw = true;
-                    } else {
-                        let user: UserFromServer = serde_json::from_str(&resp_str)?;
-
-                        return Ok(NextPage::Main(user));
-                    }
+                    return Ok(NextPage::Main(user));
                 }
                 self.should_submit = false;
             } else if self.should_register {

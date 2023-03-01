@@ -16,6 +16,18 @@ pub enum SelectedWidget {
     RegisterLink,
 }
 
+impl SelectedWidget {
+    pub fn from_i32(n: i32) -> SelectedWidget {
+        match n {
+            0 => SelectedWidget::UsernameInput,
+            1 => SelectedWidget::PasswordInput,
+            2 => SelectedWidget::LoginButton,
+            3 => SelectedWidget::RegisterLink,
+            _ => { panic!("{n} is not a widget") }
+        }
+    }
+}
+
 pub struct LoginPage<'a> {
     pub title: &'a str,
 
@@ -26,7 +38,11 @@ pub struct LoginPage<'a> {
 
     pub event_manager: EventManager,
 
+    pub error: bool,
+    pub error_message: &'a str,
+
     pub selected_widget: SelectedWidget,
+    pub selected_widget_counter: i32,
 
     pub hide_password: bool,
     pub should_quit: bool,
@@ -47,13 +63,32 @@ impl<'a> LoginPage<'a> {
 
             event_manager: EventManager::new(),
 
+            error: false,
+            error_message: "",
+
             selected_widget: SelectedWidget::UsernameInput,
+            selected_widget_counter: 0,
 
             hide_password: true,
             should_quit: false,
             should_redraw: false,
             should_submit: false,
             should_register: false,
+        }
+    }
+
+    pub fn add_selected_widget_counter(&mut self) {
+        self.selected_widget_counter += 1;
+
+        if self.selected_widget_counter == 4 {
+            self.selected_widget_counter = 0;
+        }
+    }
+    pub fn subtract_selected_widget_counter(&mut self) {
+        self.selected_widget_counter -= 1;
+
+        if self.selected_widget_counter == -1 {
+            self.selected_widget_counter = 3;
         }
     }
 }

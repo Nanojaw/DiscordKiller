@@ -62,6 +62,7 @@ pub enum Key {
     /// F12 key
     F12,
     Char(char),
+    ShiftTab,
     Ctrl(char),
     Alt(char),
     Unknown,
@@ -107,6 +108,7 @@ impl fmt::Display for Key {
             Key::Left | Key::Right | Key::Up | Key::Down => write!(f, "<{self:?} Arrow Key>"),
             Key::Enter
             | Key::Tab
+            | Key::ShiftTab
             | Key::Backspace
             | Key::Esc
             | Key::Ins
@@ -183,6 +185,10 @@ impl From<event::KeyEvent> for Key {
                 code: event::KeyCode::Tab,
                 ..
             } => Key::Tab,
+            event::KeyEvent {
+                code: event::KeyCode::BackTab,
+                ..
+            } => Key::ShiftTab,
 
             // First check for char + modifier
             event::KeyEvent {

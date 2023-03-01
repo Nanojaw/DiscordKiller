@@ -1,6 +1,6 @@
 use crate::{
     login_page::page::{LoginPage, SelectedWidget},
-    styles::{CURSOR, DEFAULT, HEADER, SELECTED},
+    styles::{CURSOR, DEFAULT, HEADER, SELECTED, ERROR, ERROR_TXT},
 };
 
 use tui::{
@@ -50,15 +50,27 @@ impl<'a> LoginPage<'a> {
         self.username_input.set_block(
             Block::default()
                 .borders(Borders::all())
-                .title("Username")
-                .border_style(match self.selected_widget {
-                    SelectedWidget::UsernameInput => SELECTED,
-                    _ => DEFAULT,
+                .title(match self.error {
+                    true => self.error_message,
+                    false => "Username",
+                })
+                .border_style(match self.error {
+                    true => ERROR,
+                    false => {
+                        match self.selected_widget {
+                            SelectedWidget::UsernameInput => SELECTED,
+                            _ => DEFAULT,
+                        }
+                    }
                 }),
         );
-        self.username_input.set_style(match self.selected_widget {
-            SelectedWidget::UsernameInput => SELECTED,
-            _ => DEFAULT,
+        
+        self.username_input.set_style(match self.error {
+            true => ERROR_TXT,
+            false => match self.selected_widget {
+                SelectedWidget::UsernameInput => SELECTED,
+                _ => DEFAULT,
+            }
         });
         self.username_input.set_cursor_line_style(Style::default());
         self.username_input
@@ -70,7 +82,10 @@ impl<'a> LoginPage<'a> {
         self.password_input.set_block(
             Block::default()
                 .borders(Borders::all())
-                .title("Password")
+                .title(match self.error {
+                    true => "",
+                    false => "Password",
+                })
                 .border_style(match self.selected_widget {
                     SelectedWidget::PasswordInput => SELECTED,
                     _ => DEFAULT,
